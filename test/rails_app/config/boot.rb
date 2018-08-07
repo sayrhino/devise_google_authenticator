@@ -1,9 +1,7 @@
-unless defined?(DEVISE_ORM)
-  DEVISE_ORM = (ENV["DEVISE_ORM"] || :active_record).to_sym
-end
+DEVISE_ORM = (ENV["DEVISE_ORM"] || :active_record).to_sym unless defined?(DEVISE_ORM)
 
 begin
-  require File.expand_path("../../../../.bundle/environment", __FILE__)
+  require File.expand_path('../../../.bundle/environment', __dir__)
 rescue LoadError
   require 'rubygems'
   require 'bundler'

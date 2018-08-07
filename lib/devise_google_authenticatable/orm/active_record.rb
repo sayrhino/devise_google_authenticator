@@ -13,7 +13,6 @@ module DeviseGoogleAuthenticator
         include DeviseGoogleAuthenticator::Schema
       end
     end
-
   end
 end
 

@@ -19,7 +19,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     assert_equal user_displayqr_path, current_path
 
     # Get the user we just signed up's token
-    testuser = User.find_by_email("test@test.com")
+    testuser = User.find_by(email: "test@test.com")
     fill_in('user_gauth_token', :with => ROTP::TOTP.new(testuser.get_qr).at(Time.now))
     click_button 'Continue...'
 
@@ -28,7 +28,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
   test 'a new user should be able to sign in without using their token' do
     create_full_user
-    User.find_by_email("fulluser@test.com").update_attributes(:gauth_enabled => 0) # force this off - unsure why sometimes it flicks on possible race condition
+    User.find_by(email: "fulluser@test.com").update(:gauth_enabled => 0) # force this off - unsure why sometimes it flicks on possible race condition
 
     visit new_user_session_path
     fill_in 'user_email', :with => 'fulluser@test.com'
@@ -40,7 +40,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
   test 'a new user should be able to sign in and change their qr code to enabled' do
     # sign_in_as_user
     create_full_user
-    User.find_by_email("fulluser@test.com").update_attributes(:gauth_enabled => 0) # force this off - unsure why sometimes it flicks on possible race condition
+    User.find_by(email: "fulluser@test.com").update(:gauth_enabled => 0) # force this off - unsure why sometimes it flicks on possible race condition
     visit new_user_session_path
     fill_in 'user_email', :with => 'fulluser@test.com'
     fill_in 'user_password', :with => '123456'
@@ -50,7 +50,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
     check 'user_gauth_enabled'
     # Get the user we just signed up's token
-    testuser = User.find_by_email("fulluser@test.com")
+    testuser = User.find_by(email: "fulluser@test.com")
     fill_in('user_gauth_token', :with => ROTP::TOTP.new(testuser.get_qr).at(Time.now))
     click_button 'Continue...'
 
@@ -59,7 +59,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
   test 'a new user should be able to sign in change their qr to enabled and be prompted for their token' do
     create_full_user
-    User.find_by_email("fulluser@test.com").update_attributes(:gauth_enabled => 0) # force this off - unsure why sometimes it flicks on possible race condition
+    User.find_by(email: "fulluser@test.com").update(:gauth_enabled => 0) # force this off - unsure why sometimes it flicks on possible race condition
     visit new_user_session_path
     fill_in 'user_email', :with => 'fulluser@test.com'
     fill_in 'user_password', :with => '123456'
@@ -68,7 +68,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     visit user_displayqr_path
     check 'user_gauth_enabled'
     # Get the user we just signed up's token
-    testuser = User.find_by_email("fulluser@test.com")
+    testuser = User.find_by(email: "fulluser@test.com")
     fill_in('user_gauth_token', :with => ROTP::TOTP.new(testuser.get_qr).at(Time.now))
     click_button 'Continue...'
 
@@ -80,7 +80,6 @@ class InvitationTest < ActionDispatch::IntegrationTest
     click_button 'Log in'
 
     assert_equal user_checkga_path, current_path
-
   end
 
   test 'fail token authentication' do
@@ -93,7 +92,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
   end
 
   test 'successfull token authentication' do
-    testuser = User.find_by_email("fulluser@test.com")
+    testuser = User.find_by(email: "fulluser@test.com")
     visit new_user_session_path
     fill_in 'user_email', :with => 'fulluser@test.com'
     fill_in 'user_password', :with => "123456"
@@ -110,7 +109,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     User.ga_timeout = 1.second
 
     # testuser = create_and_signin_gauth_user
-    testuser = User.find_by_email("fulluser@test.com")
+    testuser = User.find_by(email: "fulluser@test.com")
     visit new_user_session_path
     fill_in 'user_email', :with => 'fulluser@test.com'
     fill_in 'user_password', :with => "123456"
@@ -132,7 +131,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     User.ga_timedrift = 1
 
     # testuser = create_and_signin_gauth_user
-    testuser = User.find_by_email("fulluser@test.com")
+    testuser = User.find_by(email: "fulluser@test.com")
     visit new_user_session_path
     fill_in 'user_email', :with => 'fulluser@test.com'
     fill_in 'user_password', :with => "123456"
@@ -148,7 +147,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
   test 'user is not prompted for token again after first login until remembertime is up' do
     # testuser = create_and_signin_gauth_user
-    testuser = User.find_by_email("fulluser@test.com")
+    testuser = User.find_by(email: "fulluser@test.com")
     visit new_user_session_path
     fill_in 'user_email', :with => 'fulluser@test.com'
     fill_in 'user_password', :with => "123456"
@@ -160,7 +159,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
     visit destroy_user_session_path
     # sign_in_as_user(testuser)
-    testuser = User.find_by_email("fulluser@test.com")
+    testuser = User.find_by(email: "fulluser@test.com")
     visit new_user_session_path
     fill_in 'user_email', :with => 'fulluser@test.com'
     fill_in 'user_password', :with => "123456"
@@ -170,7 +169,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
 
     Timecop.travel(1.month.to_i + 1.day.to_i)
     # sign_in_as_user(testuser)
-    testuser = User.find_by_email("fulluser@test.com")
+    testuser = User.find_by(email: "fulluser@test.com")
     visit new_user_session_path
     fill_in 'user_email', :with => 'fulluser@test.com'
     fill_in 'user_password', :with => "123456"

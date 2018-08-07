@@ -8,16 +8,15 @@ class ActiveSupport::TestCase
     "test#{@@email_count}@email.com"
   end
 
-  def valid_attributes(attributes={})
+  def valid_attributes(attributes = {})
     { :email => generate_unique_email,
       :password => '123456',
       :password_confirmation => '123456' }.update(attributes)
   end
 
-  def new_user(attributes={})
+  def new_user(attributes = {})
     user = User.new(valid_attributes(attributes))
     user.save
     user
   end
-
 end

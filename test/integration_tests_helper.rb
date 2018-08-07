@@ -1,5 +1,4 @@
 class ActionController::IntegrationTest
-
   def warden
     request.env['warden']
   end

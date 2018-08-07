@@ -1,24 +1,28 @@
+require 'rqrcode'
+require 'base64'
+
 module DeviseGoogleAuthenticator
   module Controllers # :nodoc:
-    module Helpers # :nodoc:
-      def google_authenticator_qrcode(user, qualifier=nil, issuer=nil)
+    module Helpers
+      def google_authenticator_qrcode(user, qualifier = nil, issuer = nil)
         username = username_from_email(user.email)
         app = user.class.ga_appname || Rails.application.class.parent_name
         data = "otpauth://totp/#{otpauth_user(username, app, qualifier)}?secret=#{user.gauth_secret}"
-        data << "&issuer=#{issuer}" if !issuer.nil?
+        data << "&issuer=#{issuer}" unless issuer.nil?
         data = Rack::Utils.escape(data)
-        url = "https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=#{data}"
-        return image_tag(url, :alt => 'Google Authenticator QRCode')
+        qrcode = RQRCode::QRCode.new(data, level: :m, mode: :byte_8bit)
+        png = qrcode.as_png(fill: 'white', color: 'black', border_modules: 1, module_px_size: 4)
+        url = "data:image/png;base64,#{Base64.encode64(png.to_s).strip}"
+        image_tag(url, alt: 'Google Authenticator QRCode')
       end
 
-      def otpauth_user(username, app, qualifier=nil)
+      def otpauth_user(username, app, qualifier = nil)
         "#{username}@#{app}#{qualifier}"
       end
 
       def username_from_email(email)
-        (/^(.*)@/).match(email)[1]
+        /^(.*)@/.match(email)[1]
       end
-
     end
   end
 end

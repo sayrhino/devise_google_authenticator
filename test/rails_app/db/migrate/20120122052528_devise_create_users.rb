@@ -1,7 +1,6 @@
 class DeviseCreateUsers < ActiveRecord::Migration
   def change
     create_table(:users) do |t|
-
       ## Database authenticatable
       t.string :email,              :null => false, :default => ""
       t.string :encrypted_password, :null => false, :default => ""
@@ -38,17 +37,15 @@ class DeviseCreateUsers < ActiveRecord::Migration
       # t.string :authentication_token
 
       ## This is the old migration stuff
-      #t.database_authenticatable :null => false
-      #t.recoverable
-      #t.rememberable
-      #t.trackable
-
+      # t.database_authenticatable :null => false
+      # t.recoverable
+      # t.rememberable
+      # t.trackable
 
       # t.encryptable
       # t.confirmable
       # t.lockable :lock_strategy => :failed_attempts, :unlock_strategy => :both
       # t.token_authenticatable
-
 
       t.timestamps
     end
@@ -59,5 +56,4 @@ class DeviseCreateUsers < ActiveRecord::Migration
     # add_index :users, :unlock_token,         :unique => true
     # add_index :users, :authentication_token, :unique => true
   end
-
 end
