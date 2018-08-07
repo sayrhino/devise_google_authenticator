@@ -7,7 +7,8 @@ module Devise # :nodoc:
         base.extend ClassMethods
 
         base.class_eval do
-          before_validation :assign_auth_secret, :on => :create
+          after_initialize :assign_auth_secret, if: ->() { self.persisted? && self.gauth_secret.blank? }
+
           include InstanceMethods
         end
       end
@@ -18,11 +19,11 @@ module Devise # :nodoc:
         end
 
         def set_gauth_enabled(param)
-          update(gauth_enabled: param)
+          update_attributes(gauth_enabled: param)
         end
 
         def assign_tmp
-          update(gauth_tmp: ROTP::Base32.random_base32(32), gauth_tmp_datetime: DateTime.current)
+          update_attributes(gauth_tmp: ROTP::Base32.random_base32(32), gauth_tmp_datetime: DateTime.current)
           gauth_tmp
         end
 
@@ -63,7 +64,9 @@ module Devise # :nodoc:
         private
 
         def assign_auth_secret
-          self.gauth_secret = ROTP::Base32.random_base32(64)
+          secret_key = ROTP::Base32.random_base32(64)
+          update_attribute(:gauth_secret, secret_key) if gauth_secret.blank?
+          self.gauth_secret = secret_key
         end
       end
 
